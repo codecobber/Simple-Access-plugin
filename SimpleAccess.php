@@ -89,7 +89,7 @@ function editTest(){
 		* Change the $user values below according to your required login preferences.
 		* There are two default settings which you can delete or edit.
 		* One is for the user name 'my_login_name' and the other is 'admings'
-		* EXAMPLE: Change the value of $user (on line 97 below) to your own login name.
+		* EXAMPLE: Change the value of $user (on line 98 below) to your own login name.
 		* If you keep the admings then it is best to create a user account for that too.
 		*. . . the choice is yours 
 		* ===================================================================== */
@@ -158,7 +158,7 @@ function checkPerms(){
 					$PA_author = (string)$PA_XMLdata->author;
 
 					
-					if($PA_url == "index" || $PA_author == $PA_current_user || $PA_current_user == 'cobber' || $PA_current_user == 'admings'){
+					if($PA_url == "index" && $PA_current_user  == "my_login_name" || $PA_author == $PA_current_user || $PA_current_user == 'my_login_name' || $PA_current_user == 'admings'){
 						// check if the page is registered in sections list
 						$GLOBALS['userFlag'] = 0;
 					}
