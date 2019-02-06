@@ -95,8 +95,9 @@ function editTest(){
 		* ===================================================================== */
 		
 		//this checks for the index page as the index page does not possess an author tag in xml
-		if($pagename == 'index' && $user == 'my_login_name' || $pagename == 'index' && $user == 'admings'){
-			echo "allowed";
+
+		if($pagename == 'index' && $user == 'your_login_name' || $pagename == 'index' && $user == 'another_admin'){
+			echo "<small>".$user . "- Access allowed.</small>";
 		}
 		elseif($user != $file_author){
 			// check author against logged in user and replace content with message
@@ -158,7 +159,7 @@ function checkPerms(){
 					$PA_author = (string)$PA_XMLdata->author;
 
 					
-					if($PA_url == "index" && $PA_current_user  == "my_login_name" || $PA_author == $PA_current_user || $PA_current_user == 'my_login_name' || $PA_current_user == 'admings'){
+					if($PA_url == "index" && $PA_current_user  == "your_login_name" || $PA_author == $PA_current_user || $PA_current_user == 'your_login_name' || $PA_current_user == 'another_admin'){
 						// check if the page is registered in sections list
 						$GLOBALS['userFlag'] = 0;
 					}
