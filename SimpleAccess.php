@@ -129,7 +129,17 @@ function hideMe($pg){
 function checkPerms(){
 
 	// Get user logged include '
-	$user = get_cookie('GS_ADMIN_USERNAME');
+	$userFlag = 0;
+
+	$PA_current_user = get_cookie('GS_ADMIN_USERNAME');
+
+	$dir_handle = @opendir(GSDATAPAGESPATH) or exit('Unable to open ...getsimple/data/pages folder');
+	$PA_filenames = array(); // holds the pages list from the pages folder
+
+	//read file from directory
+	while (false !== ($PA_filename = readdir($dir_handle))) {
+			$PA_filenames[] = $PA_filename;
+	}
 
 	//get user perms
 	$user_perms = file_get_contents(GSDATAOTHERPATH."perms.json");
@@ -137,7 +147,7 @@ function checkPerms(){
 
 	foreach($json_perms as $perms_item){
 
-		  if($perms_item->id == $user){
+		  if($perms_item->id == $PA_current_user){
 					//now get the $perms
 					$perms_array = $perms_item->category;
 
@@ -151,18 +161,9 @@ function checkPerms(){
   }
 
 
-	$userFlag = 0;
 
-	$PA_current_user = get_cookie('GS_ADMIN_USERNAME');
 
-	$dir_handle = @opendir(GSDATAPAGESPATH) or exit('Unable to open ...getsimple/data/pages folder');
 
-		$PA_filenames = array(); // holds the pages list from the pages folder
-
-		//read file from directory
-        while (false !== ($PA_filename = readdir($dir_handle))) {
-			$PA_filenames[] = $PA_filename;
-		}
 
 
 		if (count($PA_filenames) != 0)
