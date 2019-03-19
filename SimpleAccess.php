@@ -12,19 +12,19 @@ $thisfile=basename(__FILE__, ".php");
 
 # register plugin
 register_plugin(
-	$thisfile, 
-	'Simple Access', 	
-	'1.0', 		
+	$thisfile,
+	'Simple Access',
+	'1.0',
 	'Code Cobber',
-	'https://www.codecobber.co.uk/', 
+	'https://www.codecobber.co.uk/',
 	'Restrict user access for certain pages',
-	'plugins', 
-	'sidetab_show'  
+	'plugins',
+	'sidetab_show'
 );
 
 add_action('header-body','hideAll');
 # activate filter
-add_action('footer','checkPerms'); 
+add_action('footer','checkPerms');
 
 # add a link in the admin tab 'plugins'
 add_action('plugins-sidebar','createSideMenu',array($thisfile,'Simple Access'));
@@ -34,7 +34,7 @@ add_action('edit-extras','editTest');
 
 function hideAll(){
 	//Search for attribute that starts with tr- within the pages.php page
-	//Hide all relevant table rows from the start. 
+	//Hide all relevant table rows from the start.
 	$uri = $_SERVER['REQUEST_URI'];
 	$slash = strripos($uri, "/");
 	$pagename = substr($uri, $slash+1);
@@ -57,8 +57,8 @@ function editTest(){
 	$user = get_cookie('GS_ADMIN_USERNAME');
 	$queryString = $_SERVER['QUERY_STRING'];
 	$queryString = str_replace("id=", "", $queryString.".xml");
-	
-	
+
+
 	//open the current file
 	$thisCurrentFile = file_get_contents(GSDATAPAGESPATH.$queryString);
 	$file_XMLdata = simplexml_load_string($thisCurrentFile);
@@ -73,17 +73,17 @@ function editTest(){
 
 
 	if($question != false){
-		
+
 		/* ============================================================
 			used for edit.php with a query string (an actual xml page)
 		 	we add 4 to discount chars ?id= and give us the page name
 		 ==============================================================*/
-		
+
 		$pagename = substr($uri, $question+4);
 
 		//the index page does not have a author tag so we need to specify the users allowed to edit this page
-		
-		/*=================================================================================================== 
+
+		/*===================================================================================================
 		* CHANGE BELOW!!!!
 		* ----------------
 		* Change the $user values below according to your required login preferences.
@@ -91,17 +91,17 @@ function editTest(){
 		* One is for the user name 'my_login_name' and the other is 'admings'
 		* EXAMPLE: Change the value of $user (on line 98 below) to your own login name.
 		* If you keep the admings then it is best to create a user account for that too.
-		*. . . the choice is yours 
+		*. . . the choice is yours
 		* ===================================================================== */
-		
+
 		//this checks for the index page as the index page does not possess an author tag in xml
 
-		if($pagename == 'index' && $user == 'your_login_name' || $pagename == 'index' && $user == 'another_admin'){
+		if($pagename == 'index' && $user == 'cobber' || $pagename == 'index' && $user == 'another_admin'){
 			echo "<small>".$user . "- Access allowed.</small>";
 		}
 		elseif($user != $file_author){
 			// check author against logged in user and replace content with message
-		
+
 			echo "<script>
 			document.getElementsByClassName('main')[0].innerHTML = '<h1 style=\'color:#d43b3b;font-size:30px\'><i class=\"fas fa-ban\"></i> Access Denied!</h1><p>You do not have permission to view or edit this page</p>';
 		    </script>";
@@ -111,7 +111,7 @@ function editTest(){
 }
 
 function showMe($pg){
-	//display the row within pages.php allowing the user to see the page name and edit button 
+	//display the row within pages.php allowing the user to see the page name and edit button
 		echo "<script>
 			document.getElementById('tr-".$pg."').style.display = 'table-row';
 		</script>";
@@ -128,12 +128,35 @@ function hideMe($pg){
 
 function checkPerms(){
 
+	// Get user logged include '
+	$user = get_cookie('GS_ADMIN_USERNAME');
+
+	//get user perms
+	$user_perms = file_get_contents(GSDATAOTHERPATH."perms.json");
+	$json_perms = json_decode($user_perms);
+
+	foreach($json_perms as $perms_item){
+
+		  if($perms_item->id == $user){
+					//now get the $perms
+					$perms_array = $perms_item->category;
+
+					// loop through the array and get admin names
+					$arrlength = count($perms_array);
+					for($x = 0; $x < $arrlength; $x++) {
+						echo $perms_array[$x];
+					}
+			}
+
+  }
+
+
 	$userFlag = 0;
-	
+
 	$PA_current_user = get_cookie('GS_ADMIN_USERNAME');
-	
+
 	$dir_handle = @opendir(GSDATAPAGESPATH) or exit('Unable to open ...getsimple/data/pages folder');
-		
+
 		$PA_filenames = array(); // holds the pages list from the pages folder
 
 		//read file from directory
@@ -141,12 +164,12 @@ function checkPerms(){
 			$PA_filenames[] = $PA_filename;
 		}
 
-		
+
 		if (count($PA_filenames) != 0)
 		{
-			
+
 			sort($PA_filenames);
-			
+
 			//Get data from each file
 			foreach ($PA_filenames as $PA_file)
 			{
@@ -158,16 +181,17 @@ function checkPerms(){
 					$PA_title = (string)$PA_XMLdata->title;
 					$PA_author = (string)$PA_XMLdata->author;
 
-					
-					if($PA_url == "index" && $PA_current_user  == "your_login_name" || $PA_author == $PA_current_user || $PA_current_user == 'your_login_name' || $PA_current_user == 'another_admin'){
-						// check if the page is registered in sections list
+
+					if($PA_url == "index" && $PA_current_user  == "cobber" || $PA_author == $PA_current_user || $PA_current_user == 'your_login_name' || $PA_current_user == 'another_admin'){
+						// check if the page author matches cobber or other
+						// user specified or the current logged in user
 						$GLOBALS['userFlag'] = 0;
 					}
 					else{
 						//if page not registered then set error flag to 1
 						$GLOBALS['userFlag'] = 1;
-					}	
-				
+					}
+
 
 					//Check the flag setting- if 1 then hide current page file
 					if($GLOBALS['userFlag'] == 1){
@@ -191,7 +215,7 @@ function sidetab_show() {
 	echo "<h3>Hide pages depending on the user logged in. </h3>
 	<p>The plugin reads from the 'author' tag of each page to obtain the author of the page.</p>
 	<p>If the the author value does not match the logged in user then the page entry is hidden from the pages listing in pages.php.</p>
-	<p>If the user tries to access a specific page by changing the url at the address bar then the content is removed and they are informed 
+	<p>If the user tries to access a specific page by changing the url at the address bar then the content is removed and they are informed
 	accordingly that they don not have permission to edit the page";
 }
 
