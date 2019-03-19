@@ -144,20 +144,14 @@ function checkPerms(){
 	//get user perms
 	$user_perms = file_get_contents(GSDATAOTHERPATH."perms.json");
 	$json_perms = json_decode($user_perms);
+	$user_permsarray = "";
 
 	foreach($json_perms as $perms_item){
 
 		  if($perms_item->id == $PA_current_user){
 					//now get the $perms
-					$perms_array = $perms_item->category;
-
-					// loop through the array and get admin names
-					$arrlength = count($perms_array);
-					for($x = 0; $x < $arrlength; $x++) {
-						echo $perms_array[$x];
-					}
+					$user_permsarray = $perms_item->category;
 			}
-
   }
 
 
@@ -182,6 +176,9 @@ function checkPerms(){
 					$PA_title = (string)$PA_XMLdata->title;
 					$PA_author = (string)$PA_XMLdata->author;
 
+		      if(in_array($PA_author,$user_permsarray)){
+						echo "Oh yeah!";
+					}
 
 					if($PA_url == "index" && $PA_current_user  == "cobber" || $PA_author == $PA_current_user || $PA_current_user == 'your_login_name' || $PA_current_user == 'another_admin'){
 						// check if the page author matches cobber or other
