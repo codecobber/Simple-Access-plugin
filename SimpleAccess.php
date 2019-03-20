@@ -31,6 +31,12 @@ add_action('plugins-sidebar','createSideMenu',array($thisfile,'Simple Access'));
 
 add_action('edit-extras','editTest');
 
+add_action('changedata-aftersave','aftersave');
+
+
+//$GLOBALS
+$pageEdited = "";
+
 
 function hideAll(){
 	//Search for attribute that starts with tr- within the pages.php page
@@ -50,6 +56,32 @@ function hideAll(){
 }
 
 
+function getUserPerms(){
+	$user = get_cookie('GS_ADMIN_USERNAME');
+	//get user perms
+	$user_perms = file_get_contents(GSDATAOTHERPATH."perms.json");
+	$json_perms = json_decode($user_perms);
+	$user_permsarray = "";
+
+	foreach($json_perms as $perms_item){
+
+			if($perms_item->id == $user){
+					//now get the $perms
+					echo $perms_item->id;
+					$user_permsarray = $perms_item->category;
+					return $user_permsarray;
+			}
+	}
+}
+
+function afterSave(){
+	//open the current file
+	$alterCurrentFile = file_get_contents(GSDATAPAGESPATH.$fileToAlter.".xml");
+	$file_XMLdata = simplexml_load_string($thisCurrentFile);
+	$file_XMLdata->author = $GLOBALS['pageEdited'];
+}
+
+
 
 
 function editTest(){
@@ -58,6 +90,7 @@ function editTest(){
 	$queryString = $_SERVER['QUERY_STRING'];
 	$queryString = str_replace("id=", "", $queryString.".xml");
 
+  $GLOBALS['pageEdited'] = $queryString;
 
 	//open the current file
 	$thisCurrentFile = file_get_contents(GSDATAPAGESPATH.$queryString);
@@ -140,25 +173,8 @@ function checkPerms(){
 	while (false !== ($PA_filename = readdir($dir_handle))) {
 			$PA_filenames[] = $PA_filename;
 	}
-
-	//get user perms
-	$user_perms = file_get_contents(GSDATAOTHERPATH."perms.json");
-	$json_perms = json_decode($user_perms);
-	$user_permsarray = "";
-
-	foreach($json_perms as $perms_item){
-
-		  if($perms_item->id == $PA_current_user){
-					//now get the $perms
-					$user_permsarray = $perms_item->category;
-			}
-  }
-
-
-
-
-
-
+    // call function to get user permissions
+		$user_permsarray = getUserPerms();
 
 		if (count($PA_filenames) != 0)
 		{
@@ -176,13 +192,8 @@ function checkPerms(){
 					$PA_title = (string)$PA_XMLdata->title;
 					$PA_author = (string)$PA_XMLdata->author;
 
+					// Check the array and see if the page author is present
 		      if(in_array($PA_author,$user_permsarray)){
-						echo "Oh yeah!";
-					}
-
-					if($PA_url == "index" && $PA_current_user  == "cobber" || $PA_author == $PA_current_user || $PA_current_user == 'your_login_name' || $PA_current_user == 'another_admin'){
-						// check if the page author matches cobber or other
-						// user specified or the current logged in user
 						$GLOBALS['userFlag'] = 0;
 					}
 					else{
