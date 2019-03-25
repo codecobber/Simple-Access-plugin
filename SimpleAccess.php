@@ -67,7 +67,7 @@ function getUserPerms(){
 
 			if($perms_item->id == $user){
 					//now get the $perms
-					echo $perms_item->id;
+
 					$user_permsarray = $perms_item->category;
 					return $user_permsarray;
 			}
@@ -88,49 +88,39 @@ function editTest(){
 
 	$user = get_cookie('GS_ADMIN_USERNAME');
 	$queryString = $_SERVER['QUERY_STRING'];
-	$queryString = str_replace("id=", "", $queryString.".xml");
 
-  $GLOBALS['pageEdited'] = $queryString;
+
+// Check if the query string holds an ampersand '&' -
+// meaning it's an save edit page
+
+  $ampSearch = stripos($queryString,"&");
+
+	if($ampSearch != false){
+		$queryString = str_replace("id=", "", $queryString);
+		$queryString  = substr($queryString,0,$ampSearch-3).".xml";
+	}
+	else {
+		$queryString = str_replace("id=", "", $queryString.".xml");
+	}
+
 
 	//open the current file
 	$thisCurrentFile = file_get_contents(GSDATAPAGESPATH.$queryString);
 	$file_XMLdata = simplexml_load_string($thisCurrentFile);
 	$file_author = (string)$file_XMLdata->author;
 
-
-    //check for edit.php by ascertaining if a question mark is used
-	$uri = $_SERVER['REQUEST_URI'];
-	$slash = strripos($uri, "/");
-	$question = strripos($uri, "?");
-	$pagename = "";
+  // A little output to show the file author
+	echo "<b>File author: </b>".$file_author;
 
 
-	if($question != false){
 
-		/* ============================================================
-			used for edit.php with a query string (an actual xml page)
-		 	we add 4 to discount chars ?id= and give us the page name
-		 ==============================================================*/
 
-		$pagename = substr($uri, $question+4);
+	if($ampSearch != false){
 
-		//the index page does not have a author tag so we need to specify the users allowed to edit this page
-
-		/*===================================================================================================
-		* CHANGE BELOW!!!!
-		* ----------------
-		* Change the $user values below according to your required login preferences.
-		* There are two default settings which you can delete or edit.
-		* One is for the user name 'my_login_name' and the other is 'admings'
-		* EXAMPLE: Change the value of $user (on line 98 below) to your own login name.
-		* If you keep the admings then it is best to create a user account for that too.
-		*. . . the choice is yours
-		* ===================================================================== */
-
-		//this checks for the index page as the index page does not possess an author tag in xml
-
-		if($pagename == 'index' && $user == 'cobber' || $pagename == 'index' && $user == 'another_admin'){
-			echo "<small>".$user . "- Access allowed.</small>";
+		// call function to get user permissions
+		$user_permsarray = getUserPerms();
+		if(in_array($file_author,$user_permsarray)){
+				echo " - Access allowed.";
 		}
 		elseif($user != $file_author){
 			// check author against logged in user and replace content with message
@@ -192,6 +182,8 @@ function checkPerms(){
 					$PA_title = (string)$PA_XMLdata->title;
 					$PA_author = (string)$PA_XMLdata->author;
 
+
+
 					// Check the array and see if the page author is present
 		      if(in_array($PA_author,$user_permsarray)){
 						$GLOBALS['userFlag'] = 0;
@@ -215,9 +207,6 @@ function checkPerms(){
 
 			}
 		}
-		//return $PA_pages;
-
-
 }
 
 function sidetab_show() {
