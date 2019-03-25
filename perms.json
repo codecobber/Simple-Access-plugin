@@ -1,0 +1,22 @@
+[
+  {
+      "id": "cobber",
+      "category": ["jack","cobber","newsadmin","commsadmin","aboutadmin"]
+  },
+  {
+      "id": "jack",
+      "category": ["cobber","jack","ictadmin","commsadmin","financeadmin"]
+  },
+  {
+      "id": "victor",
+      "category": ["victor","nursingadmin","commsadmin"]
+  },
+  {
+      "id": "winston",
+      "category": ["winston","nursingadmin","commsadmin"]
+  },
+  {
+      "id": "bobby",
+      "category": ["bobby","nursingadmin","commsadmin"]
+  }
+]
