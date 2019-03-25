@@ -22,6 +22,11 @@ register_plugin(
 	'sidetab_show'
 );
 
+//$GLOBALS
+$pageEdited = "";
+$user = get_cookie('GS_ADMIN_USERNAME');
+$fileAuth = "BOO";
+
 add_action('header-body','hideAll');
 # activate filter
 add_action('footer','checkPerms');
@@ -34,8 +39,7 @@ add_action('edit-extras','editTest');
 add_action('changedata-aftersave','aftersave');
 
 
-//$GLOBALS
-$pageEdited = "";
+
 
 
 function hideAll(){
@@ -57,7 +61,7 @@ function hideAll(){
 
 
 function getUserPerms(){
-	$user = get_cookie('GS_ADMIN_USERNAME');
+	$user = $GLOBALS['user'];
 	//get user perms
 	$user_perms = file_get_contents(GSDATAOTHERPATH."perms.json");
 	$json_perms = json_decode($user_perms);
@@ -74,11 +78,27 @@ function getUserPerms(){
 	}
 }
 
-function afterSave(){
-	//open the current file
-	$alterCurrentFile = file_get_contents(GSDATAPAGESPATH.$fileToAlter.".xml");
-	$file_XMLdata = simplexml_load_string($thisCurrentFile);
-	$file_XMLdata->author = $GLOBALS['pageEdited'];
+function afterSave($name){
+
+	$info = file_get_contents(GSDATAOTHERPATH."fileAuth.txt");
+	$json_perms = json_decode($user_perms);
+	$author = "";
+	$pageAdd = "";
+
+	foreach($json_after as $item){
+			$author = $item->author;
+			$pageAdd = $item->page;
+	}
+
+	$xmlDoc = new DOMDocument();
+  $xmlDoc->load(GSDATAPAGESPATH.$pageAdd);
+
+	$oldNode = $xmlDoc->getElementsByTagName("author")->item(0);
+	$authorTxt = $author;
+
+	$oldNode->nodeValue = "";
+	$oldNode->appendChild($xmlDoc->createCDATASection($authorTxt));
+	$writeTree = $xmlDoc->save(GSDATAPAGESPATH."hello.xml");
 }
 
 
@@ -86,12 +106,12 @@ function afterSave(){
 
 function editTest(){
 
-	$user = get_cookie('GS_ADMIN_USERNAME');
+	$user = $GLOBALS['user'];
 	$queryString = $_SERVER['QUERY_STRING'];
 
 
-// Check if the query string holds an ampersand '&' -
-// meaning it's an save edit page
+	// Check if the query string holds an ampersand '&' -
+	// meaning it's an save edit page
 
   $ampSearch = stripos($queryString,"&");
 
@@ -109,12 +129,22 @@ function editTest(){
 	$file_XMLdata = simplexml_load_string($thisCurrentFile);
 	$file_author = (string)$file_XMLdata->author;
 
+  // create an object
+	$pageObj->author = $file_author;
+  $pageObj->page = $queryString;
+  $pageJSON = json_encode($pageObj);
+
+
+	if($ampSearch == false){
+			file_put_contents(GSDATAOTHERPATH."fileAuth.txt",$pageJSON);
+	}
+
   // A little output to show the file author
 	echo "<b>File author: </b>".$file_author;
 
 
-
-
+	// If the page is saved proceed.
+	// Then check if logged in user is allowed to access it.
 	if($ampSearch != false){
 
 		// call function to get user permissions
@@ -124,12 +154,10 @@ function editTest(){
 		}
 		elseif($user != $file_author){
 			// check author against logged in user and replace content with message
-
 			echo "<script>
 			document.getElementsByClassName('main')[0].innerHTML = '<h1 style=\'color:#d43b3b;font-size:30px\'><i class=\"fas fa-ban\"></i> Access Denied!</h1><p>You do not have permission to view or edit this page</p>';
 		    </script>";
 		}
-
 	}
 }
 
@@ -154,7 +182,7 @@ function checkPerms(){
 	// Get user logged include '
 	$userFlag = 0;
 
-	$PA_current_user = get_cookie('GS_ADMIN_USERNAME');
+	$PA_current_user = $GLOBALS['user'];
 
 	$dir_handle = @opendir(GSDATAPAGESPATH) or exit('Unable to open ...getsimple/data/pages folder');
 	$PA_filenames = array(); // holds the pages list from the pages folder
