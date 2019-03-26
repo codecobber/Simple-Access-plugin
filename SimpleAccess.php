@@ -1,4 +1,8 @@
 <?php
+
+session_start();
+
+
 /*
 Plugin Name: Simple Access
 Description: Restrict user access for certain pages
@@ -25,7 +29,8 @@ register_plugin(
 //$GLOBALS
 $pageEdited = "";
 $user = get_cookie('GS_ADMIN_USERNAME');
-$fileAuth = "BOO";
+$userFlag = 0;
+
 
 add_action('header-body','hideAll');
 # activate filter
@@ -69,39 +74,64 @@ function getUserPerms(){
 
 	foreach($json_perms as $perms_item){
 
+		  //match logged in user to the id within json object
 			if($perms_item->id == $user){
 					//now get the $perms
-
 					$user_permsarray = $perms_item->category;
+					//pass back the array
 					return $user_permsarray;
 			}
 	}
 }
 
-function afterSave($name){
-
-	$info = file_get_contents(GSDATAOTHERPATH."fileAuth.txt");
-	$json_perms = json_decode($user_perms);
-	$author = "";
-	$pageAdd = "";
-
-	foreach($json_after as $item){
-			$author = $item->author;
-			$pageAdd = $item->page;
-	}
-
+function afterSave(){
+  $pagePath = GSDATAPAGESPATH.$_SESSION['pageName'];
 	$xmlDoc = new DOMDocument();
-  $xmlDoc->load(GSDATAPAGESPATH.$pageAdd);
+  $xmlDoc->load($pagePath);
 
 	$oldNode = $xmlDoc->getElementsByTagName("author")->item(0);
-	$authorTxt = $author;
+	$authorTxt = $_SESSION['fileAuth'];
 
 	$oldNode->nodeValue = "";
 	$oldNode->appendChild($xmlDoc->createCDATASection($authorTxt));
-	$writeTree = $xmlDoc->save(GSDATAPAGESPATH."hello.xml");
+	$xmlDoc->save($pagePath);
 }
 
 
+function protectPage($pageAuthor){
+
+	// A little output to show the file author
+	echo "<b>File author: </b>".$pageAuthor;
+
+	// call function to get user permissions
+	$user_permsarray = getUserPerms();
+	if(in_array($pageAuthor,$user_permsarray)){
+			echo " - Access allowed.";
+	}
+	else{
+		echo "hide me!".$pageAuthor;
+		// check author against logged in user and replace content with message
+		echo "<script>
+		document.getElementsByClassName('main')[0].innerHTML = '<h1 style=\'color:#d43b3b;font-size:30px\'><i class=\"fas fa-ban\"></i> Access Denied!</h1><p>You do not have permission to view or edit this page</p>';
+			</script>";
+	}
+}
+
+
+function getFileData($fname,$flag=0){
+	//open the current file and set session variables
+	
+	$thisCurrentFile = file_get_contents(GSDATAPAGESPATH.$fname) or die("bummer!");
+	$file_XMLdata = simplexml_load_string($thisCurrentFile);
+	$file_author = (string)$file_XMLdata->author;
+
+	if($flag == 1){
+		$_SESSION['fileAuth'] = $file_author;
+		$_SESSION['pageName'] = $fname;
+	}
+
+	return $file_author;
+}
 
 
 function editTest(){
@@ -115,50 +145,25 @@ function editTest(){
 
   $ampSearch = stripos($queryString,"&");
 
+  // generate the page name from query string
 	if($ampSearch != false){
+
 		$queryString = str_replace("id=", "", $queryString);
-		$queryString  = substr($queryString,0,$ampSearch-3).".xml";
+		$queryString = substr($queryString,0,$ampSearch-3).".xml";
+
+		$pa = getFileData($queryString);
+		protectPage($pa);
 	}
 	else {
 		$queryString = str_replace("id=", "", $queryString.".xml");
+		getFileData($queryString,1);
+		// check page access
+		protectPage($_SESSION['fileAuth']);
 	}
 
 
-	//open the current file
-	$thisCurrentFile = file_get_contents(GSDATAPAGESPATH.$queryString);
-	$file_XMLdata = simplexml_load_string($thisCurrentFile);
-	$file_author = (string)$file_XMLdata->author;
-
-  // create an object
-	$pageObj->author = $file_author;
-  $pageObj->page = $queryString;
-  $pageJSON = json_encode($pageObj);
 
 
-	if($ampSearch == false){
-			file_put_contents(GSDATAOTHERPATH."fileAuth.txt",$pageJSON);
-	}
-
-  // A little output to show the file author
-	echo "<b>File author: </b>".$file_author;
-
-
-	// If the page is saved proceed.
-	// Then check if logged in user is allowed to access it.
-	if($ampSearch != false){
-
-		// call function to get user permissions
-		$user_permsarray = getUserPerms();
-		if(in_array($file_author,$user_permsarray)){
-				echo " - Access allowed.";
-		}
-		elseif($user != $file_author){
-			// check author against logged in user and replace content with message
-			echo "<script>
-			document.getElementsByClassName('main')[0].innerHTML = '<h1 style=\'color:#d43b3b;font-size:30px\'><i class=\"fas fa-ban\"></i> Access Denied!</h1><p>You do not have permission to view or edit this page</p>';
-		    </script>";
-		}
-	}
 }
 
 function showMe($pg){
