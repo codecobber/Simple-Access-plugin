@@ -106,10 +106,10 @@ function protectPage($pageAuthor){
 	// call function to get user permissions
 	$user_permsarray = getUserPerms();
 	if(in_array($pageAuthor,$user_permsarray)){
-			echo " - Access allowed.";
+			echo " - Access granted.";
 	}
 	else{
-		echo "hide me!".$pageAuthor;
+
 		// check author against logged in user and replace content with message
 		echo "<script>
 		document.getElementsByClassName('main')[0].innerHTML = '<h1 style=\'color:#d43b3b;font-size:30px\'><i class=\"fas fa-ban\"></i> Access Denied!</h1><p>You do not have permission to view or edit this page</p>';
@@ -120,7 +120,7 @@ function protectPage($pageAuthor){
 
 function getFileData($fname,$flag=0){
 	//open the current file and set session variables
-	
+
 	$thisCurrentFile = file_get_contents(GSDATAPAGESPATH.$fname) or die("bummer!");
 	$file_XMLdata = simplexml_load_string($thisCurrentFile);
 	$file_author = (string)$file_XMLdata->author;
