@@ -35,17 +35,16 @@ $userFlag = 0;
 add_action('header-body','hideAll');
 # activate filter
 add_action('footer','checkPerms');
-
 # add a link in the admin tab 'plugins'
 add_action('plugins-sidebar','createSideMenu',array($thisfile,'Simple Access'));
-
 add_action('edit-extras','editTest');
-
 add_action('changedata-aftersave','aftersave');
+add_action('header','setUser');
 
 
-
-
+function setUser(){
+	$GLOBALS['user'] = get_cookie('GS_ADMIN_USERNAME');
+}
 
 function hideAll(){
 	//Search for attribute that starts with tr- within the pages.php page
@@ -121,7 +120,7 @@ function protectPage($pageAuthor){
 function getFileData($fname,$flag=0){
 	//open the current file and set session variables
 
-	$thisCurrentFile = file_get_contents(GSDATAPAGESPATH.$fname) or die("bummer!");
+	$thisCurrentFile = file_get_contents(GSDATAPAGESPATH.$fname) or die("bummer! - No File man.");
 	$file_XMLdata = simplexml_load_string($thisCurrentFile);
 	$file_author = (string)$file_XMLdata->author;
 
@@ -154,7 +153,10 @@ function editTest(){
 		$pa = getFileData($queryString);
 		protectPage($pa);
 	}
-	else {
+	elseif($queryString == "" || is_null($queryString)){
+		echo "<b>File author</b>: ".$user;
+	}
+	else{
 		$queryString = str_replace("id=", "", $queryString.".xml");
 		getFileData($queryString,1);
 		// check page access
