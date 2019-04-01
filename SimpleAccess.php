@@ -22,8 +22,8 @@ register_plugin(
 	'Code Cobber',
 	'https://www.codecobber.co.uk/',
 	'Restrict user access for certain pages',
-	'plugins',
-	'sidetab_show'
+	'simple_access',
+	'simple_access_show'
 );
 
 //$GLOBALS
@@ -33,14 +33,58 @@ $userFlag = 0;
 
 
 add_action('header-body','hideAll');
-# activate filter
 add_action('footer','checkPerms');
-# add a link in the admin tab 'plugins'
-add_action('plugins-sidebar','createSideMenu',array($thisfile,'Simple Access'));
 add_action('edit-extras','editTest');
 add_action('changedata-aftersave','aftersave');
 add_action('header','setUser');
 
+# add a link in the admin tab 'simple_access'
+//@Params(within the plugins sidebar, create a side menu, (link to this file, use this text as title))
+add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-tag" aria-hidden="true"></i> About', 'aboutsa'));
+add_action('nav-tab', 'createNavTab', array( 'simple_access', $thisfile, 'Simple Access','overview' ) );
+add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-eye" aria-hidden="true"></i> Overview', 'overview'));
+add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-users" aria-hidden="true"></i> Edit perms', 'editperms'));
+add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-tag" aria-hidden="true"></i> Reset users perms', 'reset'));
+
+
+function makeList(){
+	$jdata = array();
+
+	$files = "../data/users/";
+	$userFiles = scandir($files);
+
+	foreach($userFiles as $ausr){
+		if($ausr == "." || $ausr == ".."){
+			continue;
+		}
+			//
+			$name = str_ireplace(".xml","",$ausr);
+			$user = array("id" => $name, "category" => $name);
+			array_push($jdata,$user);
+			echo $user['id']."<br>";
+	}
+
+
+	$jdata = json_encode($jdata,JSON_PRETTY_PRINT);
+ 	file_put_contents(GSDATAOTHERPATH."perms.json",$jdata);
+}
+
+
+function simple_access_show() {
+
+	if(isset($_GET['overview'])){
+		include(GSPLUGINPATH.'simpleAccess/overview.php');
+	}
+	elseif(isset($_GET['reset'])){
+		makeList();
+	}
+	elseif(isset($_GET['editperms'])){
+		include(GSPLUGINPATH.'simpleAccess/editperms.php');
+	}
+	elseif(isset($_GET['aboutsa'])){
+		include(GSPLUGINPATH.'simpleAccess/about.php');
+	}
+}
 
 function setUser(){
 	$GLOBALS['user'] = get_cookie('GS_ADMIN_USERNAME');
@@ -75,7 +119,7 @@ function getUserPerms(){
 
 		  //match logged in user to the id within json object
 			if($perms_item->id == $user){
-					//now get the $perms
+					//now get the $perms as a string
 					$user_permsarray = $perms_item->category;
 					//pass back the array
 					return $user_permsarray;
@@ -98,17 +142,15 @@ function afterSave(){
 
 
 function protectPage($pageAuthor){
-
 	// A little output to show the file author
 	echo "<b>File author: </b>".$pageAuthor;
 
 	// call function to get user permissions
 	$user_permsarray = getUserPerms();
-	if(in_array($pageAuthor,$user_permsarray)){
+	if(stripos($user_permsarray,$pageAuthor)!==false){
 			echo " - Access granted.";
 	}
 	else{
-
 		// check author against logged in user and replace content with message
 		echo "<script>
 		document.getElementsByClassName('main')[0].innerHTML = '<h1 style=\'color:#d43b3b;font-size:30px\'><i class=\"fas fa-ban\"></i> Access Denied!</h1><p>You do not have permission to view or edit this page</p>';
@@ -138,7 +180,6 @@ function editTest(){
 	$user = $GLOBALS['user'];
 	$queryString = $_SERVER['QUERY_STRING'];
 
-
 	// Check if the query string holds an ampersand '&' -
 	// meaning it's an save edit page
 
@@ -162,10 +203,6 @@ function editTest(){
 		// check page access
 		protectPage($_SESSION['fileAuth']);
 	}
-
-
-
-
 }
 
 function showMe($pg){
@@ -199,11 +236,10 @@ function checkPerms(){
 			$PA_filenames[] = $PA_filename;
 	}
     // call function to get user permissions
-		$user_permsarray = getUserPerms();
+		$user_permsstring = getUserPerms();
 
 		if (count($PA_filenames) != 0)
 		{
-
 			sort($PA_filenames);
 
 			//Get data from each file
@@ -220,7 +256,7 @@ function checkPerms(){
 
 
 					// Check the array and see if the page author is present
-		      if(in_array($PA_author,$user_permsarray)){
+		      if(stripos($user_permsstring,$PA_author)!==false){
 						$GLOBALS['userFlag'] = 0;
 					}
 					else{
@@ -244,13 +280,7 @@ function checkPerms(){
 		}
 }
 
-function sidetab_show() {
-	echo "<h3>Hide pages depending on the user logged in. </h3>
-	<p>The plugin reads from the 'author' tag of each page to obtain the author of the page.</p>
-	<p>If the the author value does not match the logged in user then the page entry is hidden from the pages listing in pages.php.</p>
-	<p>If the user tries to access a specific page by changing the url at the address bar then the content is removed and they are informed
-	accordingly that they don not have permission to edit the page";
-}
+
 
 
 ?>
