@@ -113,16 +113,16 @@ function getUserPerms(){
 	//get user perms
 	$user_perms = file_get_contents(GSDATAOTHERPATH."perms.json");
 	$json_perms = json_decode($user_perms);
-	$user_permsarray = "";
+	$user_permsstring = "";
 
 	foreach($json_perms as $perms_item){
 
 		  //match logged in user to the id within json object
 			if($perms_item->id == $user){
 					//now get the $perms as a string
-					$user_permsarray = $perms_item->category;
+					$user_permsstring = $perms_item->category;
 					//pass back the array
-					return $user_permsarray;
+					return $user_permsstring;
 			}
 	}
 }
