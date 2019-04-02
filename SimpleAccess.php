@@ -121,14 +121,17 @@ function afterSave(){
 }
 
 
-function protectPage($pageAuthor){
+function protectPage($pageAuthor,$url=""){
 	// A little output to show the file author
 	echo "<b>File author: </b>".$pageAuthor;
 
 	// call function to get user permissions
-	$user_permsarray = getUserPerms();
-	if(stripos($user_permsarray,$pageAuthor)!==false){
+	$user_permsString = getUserPerms();
+	if(stripos($user_permsString,$pageAuthor)!==false){
 			echo " - Access granted.";
+	}
+	elseif(stripos($user_permsString,'index') !== false && $url == 'index.xml'){
+		echo " - Access granted.";
 	}
 	else{
 		// check author against logged in user and replace content with message
@@ -166,22 +169,23 @@ function editTest(){
   $ampSearch = stripos($queryString,"&");
 
   // generate the page name from query string
-	if($ampSearch != false){
-
+	if($ampSearch !== false){
+    //if ampersand is found in querystring
 		$queryString = str_replace("id=", "", $queryString);
 		$queryString = substr($queryString,0,$ampSearch-3).".xml";
 
-		$pa = getFileData($queryString);
-		protectPage($pa);
+		$pa = getFileData($queryString); //get the page author
+		protectPage($pa,$queryString);
 	}
 	elseif($queryString == "" || is_null($queryString)){
+		//checking if the page is create new page
 		echo "<b>File author</b>: ".$user;
 	}
 	else{
 		$queryString = str_replace("id=", "", $queryString.".xml");
-		getFileData($queryString,1);
+		$check = getFileData($queryString,1);
 		// check page access
-		protectPage($_SESSION['fileAuth']);
+		protectPage($_SESSION['fileAuth'],$queryString);
 	}
 }
 
@@ -234,10 +238,13 @@ function checkPerms(){
 					$PA_author = (string)$PA_XMLdata->author;
 
 
-
 					// Check the array and see if the page author is present
 		      if(stripos($user_permsstring,$PA_author)!==false){
 						$GLOBALS['userFlag'] = 0;
+					}
+					elseif(stripos($user_permsstring,'index') !== false && $PA_url == 'index'){
+						//this is the home page (index.xml)
+							$GLOBALS['userFlag'] = 0;
 					}
 					else{
 						//if page not registered then set error flag to 1
