@@ -47,27 +47,7 @@ add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class
 add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-tag" aria-hidden="true"></i> Reset users perms', 'reset'));
 
 
-function makeList(){
-	$jdata = array();
 
-	$files = "../data/users/";
-	$userFiles = scandir($files);
-
-	foreach($userFiles as $ausr){
-		if($ausr == "." || $ausr == ".."){
-			continue;
-		}
-			//
-			$name = str_ireplace(".xml","",$ausr);
-			$user = array("id" => $name, "category" => $name);
-			array_push($jdata,$user);
-			echo $user['id']."<br>";
-	}
-
-
-	$jdata = json_encode($jdata,JSON_PRETTY_PRINT);
- 	file_put_contents(GSDATAOTHERPATH."perms.json",$jdata);
-}
 
 
 function simple_access_show() {
@@ -76,7 +56,7 @@ function simple_access_show() {
 		include(GSPLUGINPATH.'simpleAccess/overview.php');
 	}
 	elseif(isset($_GET['reset'])){
-		makeList();
+		include(GSPLUGINPATH.'simpleAccess/reset.php');
 	}
 	elseif(isset($_GET['editperms'])){
 		include(GSPLUGINPATH.'simpleAccess/editperms.php');
