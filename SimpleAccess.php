@@ -32,6 +32,7 @@ $user = get_cookie('GS_ADMIN_USERNAME');
 $userFlag = 0;
 
 
+
 add_action('header-body','hideAll');
 add_action('footer','checkPerms');
 add_action('edit-extras','editTest');
@@ -47,7 +48,7 @@ add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class
 add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-tag" aria-hidden="true"></i> Reset users perms', 'reset'));
 
 
-
+// setting the access interface (Below) --------------------------
 
 
 function simple_access_show() {
@@ -65,6 +66,9 @@ function simple_access_show() {
 		include(GSPLUGINPATH.'simpleAccess/about.php');
 	}
 }
+
+
+// setting the access rights (Below) --------------------------
 
 function setUser(){
 	$GLOBALS['user'] = get_cookie('GS_ADMIN_USERNAME');
@@ -204,8 +208,51 @@ function hideMe($pg){
 		</script>";
 }
 
+function updateUsers(){
+	$updateUsers = scandir(GSDATAPATH."users") or die('OOOPS! - No users file found');
+	$updateJSON_Users = file_get_contents(GSDATAOTHERPATH."perms.json") or die('OOOPS! - No perms file found');
+
+  $perms_users = json_decode($updateJSON_Users);
+	$pcount = count($perms_users);
+
+
+
+		foreach ($updateUsers as $ukey => $uvalue) {
+			$fname = str_replace(".xml","",$uvalue);
+			if($fname == '.' || $fname == '..'){
+				continue;
+			}
+			else{
+				for($i=0;$i<$pcount;$i++) {
+					$pname = $perms_users[$i]->id;
+
+					if($fname == $pname){
+						$flag = 0;
+						break;
+					}
+					else{
+						$flag = 1;
+					}
+				}
+				if($flag == 1){
+					echo "make new entry for: ".$fname."<br>";
+					$new_user = array("id" => $fname, "category" => $fname);
+					array_push($perms_users,$new_user);
+				}
+			}
+			$flag = 0;
+		}
+
+		$jdata = json_encode($perms_users,JSON_PRETTY_PRINT);
+	 	file_put_contents("../data/other/perms.json",$jdata) or die("Bummer!!!");
+}
+
+
+
 
 function checkPerms(){
+
+	updateUsers();
 
 	// Get user logged include '
 	$userFlag = 0;

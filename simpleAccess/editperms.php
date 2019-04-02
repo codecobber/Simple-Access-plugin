@@ -56,45 +56,50 @@ function grabChoices(){
 <?php
 echo "
 <table>
-<tr>
-  <th style='padding-bottom:20px; text-align:center' colspan='2'>
-  <h3>Changing permissions</h3>
-  </th>
-</tr>
+  <tr>
+    <th style='padding-bottom:20px; text-align:center' colspan='2'>
+    <h3>Changing permissions</h3>
+    </th>
+  </tr>
 
-<tr style='padding-top:20px;'>
-<td class='permsRow' style='padding-right:20px;'>
+  <tr style='padding-top:20px;'>
+    <td class='permsRow' style='padding-right:20px;'>
 
 
-        <p><br><b>Select a user:</b></p>";
+            <p><br><b>Select a user:</b></p>";
 
-        for($i=0;$i<$countItems;$i++){
-        ?>
-          <p style="border-bottom:dotted 1px #e0dcdc;padding-bottom:10px;">
-          <input onclick="getList(this.id)" id='<?php echo $jsonGrab[$i]->id; ?>' type='radio' name='opt1'/>
-          <label style='margin-left:10px;top:-4px; position: relative; display:inline;'><?php echo $jsonGrab[$i]->id; ?> </label>
-          <br><b>Perms: </b> <?php echo $jsonGrab[$i]->category; ?>
+            for($i=0;$i<$countItems;$i++){
+            ?>
+              <p style="border-bottom:dotted 1px #e0dcdc;padding-bottom:10px;">
+              <input onclick="getList(this.id)" id='<?php echo $jsonGrab[$i]->id; ?>' type='radio' name='opt1'/>
+              <label style='margin-left:10px;top:-4px; position: relative; display:inline;'><?php echo $jsonGrab[$i]->id; ?> </label>
+              <br><b>Perms: </b> <?php echo $jsonGrab[$i]->category; ?>
+              </p>
+            <?php
+            }
+    echo "
+    </td>
+    <td class='permsRow'>
+
+
+          <p><br><b>Select permissions:</b></p>";
+
+          for($i=0;$i<$countItems;$i++){
+
+            echo "<p>
+            <input id='".$jsonGrab[$i]->id."2' class='checks' type='checkbox' name='opt' value='".$jsonGrab[$i]->id."' />
+            <label style='margin-left:10px;top:-4px; position: relative; display:inline;'>".$jsonGrab[$i]->id. "</label>
+            </p>";
+          }
+          echo "
+          <p>
+          <input id='index2' class='checks' type='checkbox' name='opt' value='index' />
+          <label style='margin-left:10px;top:-4px; position: relative; display:inline;'>index (Home page)</label>
           </p>
-        <?php
-        }
-
-
-echo "
-</td>
-<td class='permsRow'>
-
-
-        <p><br><b>Select permissions:</b></p>";
-
-        for($i=0;$i<$countItems;$i++){
-
-          echo "<p>
-          <input id='".$jsonGrab[$i]->id."2' class='checks' type='checkbox' name='opt' value='".$jsonGrab[$i]->id."' />
-          <label style='margin-left:10px;top:-4px; position: relative; display:inline;'>".$jsonGrab[$i]->id. "</label>
-          </p>";
-        }
-echo "<button onclick='grabChoices()'>Submit</button>
-<p id='confirmMessage'></p>
-</td></tr></table>";
+          <button onclick='grabChoices()'>Submit</button>
+          <p id='confirmMessage'></p>
+    </td>
+  </tr>
+</table>";
 
 ?>
