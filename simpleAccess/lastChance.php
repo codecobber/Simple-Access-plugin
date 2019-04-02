@@ -6,7 +6,9 @@ function makeList(){
 	$files = "../../data/users/";
 	$userFiles = scandir($files);
 
-	foreach($userFiles as $ausr){
+  echo "<h3 style='margin-top:2em;'>The following have been reset to their default setting:</h3>";
+
+  foreach($userFiles as $ausr){
 		if($ausr == "." || $ausr == ".."){
 			continue;
 		}
@@ -14,8 +16,9 @@ function makeList(){
 			$name = str_ireplace(".xml","",$ausr);
 			$user = array("id" => $name, "category" => $name);
 			array_push($jdata,$user);
-			echo "<b>".$user['id']."</b> -- Reset<br>";
+			echo "<b>* ".$user['id']."</b><br>";
 	}
+
 
 
 	$jdata = json_encode($jdata,JSON_PRETTY_PRINT);
