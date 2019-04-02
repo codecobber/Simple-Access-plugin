@@ -18,7 +18,7 @@ $thisfile=basename(__FILE__, ".php");
 register_plugin(
 	$thisfile,
 	'Simple Access',
-	'1.0',
+	'1.2',
 	'Code Cobber',
 	'https://www.codecobber.co.uk/',
 	'Restrict user access for certain pages',
@@ -106,7 +106,7 @@ function getUserPerms(){
 					//now get the $perms as a string
 					$user_permsstring = $perms_item->category;
 					//pass back the array
-					return $user_permsstring;
+					return strtolower($user_permsstring);
 			}
 	}
 }
@@ -219,12 +219,14 @@ function updateUsers(){
 
 		foreach ($updateUsers as $ukey => $uvalue) {
 			$fname = str_replace(".xml","",$uvalue);
+			$fname = strtolower($fname);
+
 			if($fname == '.' || $fname == '..'){
 				continue;
 			}
 			else{
 				for($i=0;$i<$pcount;$i++) {
-					$pname = $perms_users[$i]->id;
+					$pname = strtolower($perms_users[$i]->id);
 
 					if($fname == $pname){
 						$flag = 0;
@@ -235,7 +237,6 @@ function updateUsers(){
 					}
 				}
 				if($flag == 1){
-					echo "make new entry for: ".$fname."<br>";
 					$new_user = array("id" => $fname, "category" => $fname);
 					array_push($perms_users,$new_user);
 				}

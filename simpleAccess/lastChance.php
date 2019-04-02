@@ -9,11 +9,15 @@ function makeList(){
   echo "<h3 style='margin-top:2em;'>The following have been reset to their default setting:</h3>";
 
   foreach($userFiles as $ausr){
+
+		$ausr = strtolower($ausr);
+
 		if($ausr == "." || $ausr == ".."){
 			continue;
 		}
 			//
 			$name = str_ireplace(".xml","",$ausr);
+			$name = strtolower($name);
 			$user = array("id" => $name, "category" => $name);
 			array_push($jdata,$user);
 			echo "<b>* ".$user['id']."</b><br>";

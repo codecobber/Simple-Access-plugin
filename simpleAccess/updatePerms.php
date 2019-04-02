@@ -35,6 +35,7 @@ foreach($juserDat as $user_item){
 }
 
 $juserDat = json_encode($arrUpdate,JSON_PRETTY_PRINT);
+$juserDat = strtolower($juserDat);
 file_put_contents("../../data/other/perms.json",$juserDat);
 
 echo "<strong style='position:relative; top:3em; background-color:green;color:#fff;padding:10px;font-size:1.6em'>Update Complete.</strong>";
