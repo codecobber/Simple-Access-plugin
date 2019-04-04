@@ -30,6 +30,7 @@ register_plugin(
 $pageEdited = "";
 $user = get_cookie('GS_ADMIN_USERNAME');
 $userFlag = 0;
+$showHidePath = basename($_SERVER['SCRIPT_NAME']);
 
 
 
@@ -194,18 +195,24 @@ function editTest(){
 }
 
 function showMe($pg){
+	if($GLOBALS['showHidePath']=="pages.php"){
 	//display the row within pages.php allowing the user to see the page name and edit button
 		echo "<script>
 			document.getElementById('tr-".$pg."').style.display = 'table-row';
 		</script>";
+	}
 }
 
 
 function hideMe($pg){
-	//remove the listing (row) from pages.php
-		echo "<script>
-			document.getElementById('tr-".$pg."').style.display = 'none';
-		</script>";
+
+	if($GLOBALS['showHidePath']=="pages.php"){
+		//remove the listing (row) from pages.php
+			echo "<script>
+				document.getElementById('tr-".$pg."').style.display = 'none';
+			</script>";
+	}
+
 }
 
 function updateUsers(){
