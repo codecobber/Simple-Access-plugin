@@ -46,8 +46,10 @@ add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class
 add_action('nav-tab', 'createNavTab', array( 'simple_access', $thisfile, 'Simple Access','overview' ) );
 add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-eye" aria-hidden="true"></i> Overview', 'overview'));
 add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-users" aria-hidden="true"></i> Edit perms', 'editperms'));
-add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-tag" aria-hidden="true"></i> Reset users perms', 'reset'));
+add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fas fa-skull" aria-hidden="true"></i> Reset users perms', 'reset'));
 
+register_style('simpleAccessCSS', $SITEURL.'plugins/simpleAccess/css/simpleAccessCSS.css','1', false);
+queue_style('simpleAccessCSS', GSBACK);
 
 // setting the access interface (Below) --------------------------
 
@@ -61,7 +63,7 @@ function simple_access_show() {
 		include(GSPLUGINPATH.'simpleAccess/reset.php');
 	}
 	elseif(isset($_GET['editperms'])){
-		include(GSPLUGINPATH.'simpleAccess/editperms.php');
+		include(GSPLUGINPATH.'simpleAccess/editPerms.php');
 	}
 	elseif(isset($_GET['aboutsa'])){
 		include(GSPLUGINPATH.'simpleAccess/about.php');
@@ -73,6 +75,7 @@ function simple_access_show() {
 
 function setUser(){
 	$GLOBALS['user'] = get_cookie('GS_ADMIN_USERNAME');
+	echo '<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">';
 }
 
 function hideAll(){

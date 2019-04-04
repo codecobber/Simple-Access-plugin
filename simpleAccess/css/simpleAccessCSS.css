@@ -1,0 +1,75 @@
+/*
+----------------------------
+File: simpleAccessCSS.css
+Author: codecobber
+Use: for simpleAccess plugin
+----------------------------
+*/
+
+/* Global*/
+
+.overView, td.permsRow b, td.permsRow label, .resetStyle p, .aboutStyle{
+  color:#444;
+}
+
+
+/* EditPerms.php*/
+
+#editsimpleAccess h3{
+  padding:20px;
+  text-align:center;
+}
+
+#editsimpleAccess td{
+  width:50%;
+}
+
+#editsimpleAccess .nameLabel{
+  color:#fff;
+  font-size:1.1em;
+  background-color:#444;
+  padding:5px 10px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+}
+
+#editsimpleAccess .nameLabel span{
+  font-size:0.8em;
+  color:#fff;
+}
+
+#editsimpleAccess .permsRow{
+  padding-right:20px;
+}
+
+#editsimpleAccess .permsRow p{
+  border-bottom:dotted 1px #e0dcdc;
+  padding-bottom:10px;
+}
+
+#editsimpleAccess label{
+  margin-left:10px;
+  top:-4px;
+  position: relative;
+  display:inline;
+}
+
+#editsimpleAccess label.lbl{
+  margin-left:10px;
+  top:-4px;
+  position: relative;
+  display:inline;
+}
+
+/* Overview.php*/
+p.overViewStyle{
+  border-top:dotted #ccc 1px;
+  padding-top:7px;
+}
+
+.overView p i, .permsRow i{
+  color: #3aa0c7;
+  margin-right: 8px;
+  font-size: 1.6em;
+}
