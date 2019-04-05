@@ -73,20 +73,33 @@ function simple_access_show() {
 
 		if (file_exists(GSDATAOTHERPATH . "perms.json")) {
     echo "...";
-		} else {
-		    ?>
-				<script>
-					var xhttp2 = new XMLHttpRequest();
-				  xhttp2.onreadystatechange = function() {
-				    if (this.readyState == 4 && this.status == 200) {
-				     document.getElementById('confirmResetMessage').innerHTML = this.responseText;
-				    }
-				  };
-				  xhttp2.open("GET", "../plugins/simpleAccess/lastChance.php", true);
-				  xhttp2.send();
-				</script>
+		}
+		else {
+			$installData = array();
 
-				<?php
+			$install_files = "../data/users/";
+			$install_userFiles = scandir($install_files) or die('Problem scannig user file.');
+
+
+		  foreach($install_userFiles as $install_ausr){
+
+				$install_ausr = strtolower($install_ausr);
+
+				if($install_ausr == "." || $install_ausr == ".."){
+					continue;
+				}
+					
+					$install_name = str_ireplace(".xml","",$install_ausr);
+					$install_name = strtolower($install_name);
+					$install_user = array("id" => $install_name, "category" => $install_name);
+					array_push($installData,$install_user);
+			}
+
+
+
+			$installData = json_encode($installData,JSON_PRETTY_PRINT);
+			file_put_contents('../data/other/perms.json',$installData)or die('Write problem to json');
+			echo "User file created.";
 		}
 
 	}
