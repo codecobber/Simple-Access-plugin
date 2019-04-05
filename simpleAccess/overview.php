@@ -5,7 +5,7 @@ $userDataGrab = file_get_contents($filesPerms);
 
 $jsonGrab = json_decode($userDataGrab);
 $countItems = count($jsonGrab);
-echo "<div class='overView permsRow'><h2>Current user permissions</h2>";
+echo "<div class='overView permsRow'><h3>Current user permissions</h3>";
 
 for($i=0;$i<$countItems;$i++){
   echo "

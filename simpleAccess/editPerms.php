@@ -88,7 +88,7 @@ echo "
     <td colspan='2'>
       <p>Select a user from the list of users in left hand column. The list also shows the current permissions for each user.<br>
       To add permissions for the selected user, select the desired checkboxes in the right hand column and then click the submit button.</p>
-      <p>The permissions work by resetting the selected user to what ever is selected in the checkbox. This means that if you want to remove a specific permissions then you leave the checkbox unchecked.</p>
+      <p>The permissions work by resetting the selected user to what ever is selected in the checkbox.<br>This means that if you want to remove specific permissions then you leave the checkbox unchecked.</p>
     </td>
   </tr>
 

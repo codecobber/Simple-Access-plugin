@@ -68,6 +68,9 @@ function simple_access_show() {
 	elseif(isset($_GET['aboutsa'])){
 		include(GSPLUGINPATH.'simpleAccess/about.php');
 	}
+	else{
+		include(GSPLUGINPATH.'simpleAccess/intro.php');
+	}
 }
 
 
