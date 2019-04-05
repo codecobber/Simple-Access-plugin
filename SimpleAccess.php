@@ -70,6 +70,13 @@ function simple_access_show() {
 	}
 	else{
 		include(GSPLUGINPATH.'simpleAccess/intro.php');
+
+		if (file_exists(GSDATAOTHERPATH . "perms.json")) {
+    echo "...";
+		} else {
+		    include(GSPLUGINPATH.'simpleAccess/lastChance.php');
+		}
+
 	}
 }
 
