@@ -74,7 +74,19 @@ function simple_access_show() {
 		if (file_exists(GSDATAOTHERPATH . "perms.json")) {
     echo "...";
 		} else {
-		    include(GSPLUGINPATH.'simpleAccess/lastChance.php');
+		    ?>
+				<script>
+					var xhttp2 = new XMLHttpRequest();
+				  xhttp2.onreadystatechange = function() {
+				    if (this.readyState == 4 && this.status == 200) {
+				     document.getElementById('confirmResetMessage').innerHTML = this.responseText;
+				    }
+				  };
+				  xhttp2.open("GET", "../plugins/simpleAccess/lastChance.php", true);
+				  xhttp2.send();
+				</script>
+
+				<?php
 		}
 
 	}
@@ -229,8 +241,8 @@ function hideMe($pg){
 }
 
 function updateUsers(){
-	$updateUsers = scandir(GSDATAPATH."users") or die('OOOPS! - No users file found');
-	$updateJSON_Users = file_get_contents(GSDATAOTHERPATH."perms.json") or die('OOOPS! - No perms file found');
+	$updateUsers = scandir(GSDATAPATH."users") or die('No users file found');
+	$updateJSON_Users = file_get_contents(GSDATAOTHERPATH."perms.json") or die('No perms file found');
 
   $perms_users = json_decode($updateJSON_Users);
 	$pcount = count($perms_users);
