@@ -20,7 +20,7 @@ function makeList(){
 			$name = strtolower($name);
 			$user = array("id" => $name, "category" => $name);
 			array_push($jdata,$user);
-			echo "<b>* ".$user['id']."</b><br>";
+			echo "<b><i class='fas fa-user-circle'></i> ".$user['id']."</b><br>";
 	}
 
 
