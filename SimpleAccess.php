@@ -48,8 +48,8 @@ add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class
 add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-users" aria-hidden="true"></i> Edit perms', 'editperms'));
 add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fas fa-skull" aria-hidden="true"></i> Reset users perms', 'reset'));
 
-register_style('dark_theme_style', $SITEURL.'plugins/simpleAccess/css/simpleAccessCSS.css', '0.1', FALSE);
-queue_style( 'dark_theme_style' , GSBACK ) ;
+register_style('simpleAccess_style', $SITEURL.'plugins/simpleAccess/css/simpleAccessCSS.css', '0.1', 'all');
+queue_style( 'simpleAccess_style' , GSBACK ) ;
 
 // setting the access interface (Below) --------------------------
 
@@ -266,7 +266,7 @@ function updateUsers(){
 			$fname = str_replace(".xml","",$uvalue);
 			$fname = strtolower($fname);
 
-			if($fname == '.' || $fname == '..'){
+			if($fname == '.' || $fname == '..' || $fname == '.htaccess'){
 				continue;
 			}
 			else{
