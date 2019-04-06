@@ -148,7 +148,7 @@ echo "
           echo "
           <p>
           <input id='index2' class='checks' type='checkbox' name='opt' value='index' />
-          <label class='lbl'>index (Home page)</label>
+          <label class='lbl' data-name ='index (Home page)'>index (Home page)</label>
           </p>
           <button onclick='grabChoices()'>Submit</button>
           <p id='confirmMessage'></p>
