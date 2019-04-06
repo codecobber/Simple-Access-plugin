@@ -1,5 +1,6 @@
 <?php
 
+
 if(!empty($_POST)){
 //Get the string value from XHR then create an array
 $opt = $_POST['d'];
@@ -38,7 +39,9 @@ foreach($juserDat as $user_item){
 $juserDat = json_encode($arrUpdate,JSON_PRETTY_PRINT);
 $juserDat = strtolower($juserDat);
 file_put_contents("../data/other/perms.json",$juserDat);
-echo "<h3 id='updateConfirmMessage'>Changes saved</h3>";
+
+    echo "<p id='changesSavedMsg'>Changes Saved</p>";
+
 }
 
 
@@ -122,6 +125,7 @@ echo "
               <input onclick="getList(this.id)" id='<?php echo $jsonGrab[$i]->id; ?>' type='radio' name='opt1'/>
               <label><?php echo $jsonGrab[$i]->id; ?> </label>
               <br><b>Perms: </b> <?php echo $jsonGrab[$i]->category; ?>
+              <br>. . . . . 
               </p>
             <?php
             }
@@ -152,6 +156,8 @@ echo "
     </td>
   </tr>
 </table>";
+
+
 
 ?>
 

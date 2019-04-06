@@ -25,9 +25,8 @@ Use: for simpleAccess plugin
 }
 
 #editsimpleAccess .nameLabel{
-  color:#fff;
+  color:#444;
   font-size:1.1em;
-  background-color:#444;
   padding:9px 10px 3px 5px;
   border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -36,7 +35,7 @@ Use: for simpleAccess plugin
 
 #editsimpleAccess .nameLabel span{
   font-size:0.8em;
-  color:#fff;
+  color:#444;
 }
 
 #editsimpleAccess .permsRow{
@@ -44,7 +43,6 @@ Use: for simpleAccess plugin
 }
 
 #editsimpleAccess .permsRow p{
-  border-bottom:dotted 1px #e0dcdc;
   padding-bottom:10px;
 }
 
@@ -62,6 +60,19 @@ Use: for simpleAccess plugin
   display:inline;
 }
 
+#changesSavedMsg{
+  color:#fff;
+  background-color:#40bd29;
+  padding:9px 10px 3px 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  text-align: center;
+  width:40%;
+  margin:0 auto;
+  font-weight:bold;
+}
+
 /* Overview.php*/
 p.overViewStyle{
   border-top:dotted #ccc 1px;
@@ -72,4 +83,10 @@ p.overViewStyle{
   color: #3aa0c7;
   margin-right: 8px;
   font-size: 1.6em;
+}
+
+#permsCreated{
+  color:#444;
+  text-align:right;
+  font-weight:bold;
 }

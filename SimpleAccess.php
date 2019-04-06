@@ -42,8 +42,8 @@ add_action('header','setUser');
 
 # add a link in the admin tab 'simple_access'
 //@Params(within the plugins sidebar, create a side menu, (link to this file, use this text as title))
-add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-tag" aria-hidden="true"></i> About', 'aboutsa'));
 add_action('nav-tab', 'createNavTab', array( 'simple_access', $thisfile, 'Simple Access','overview' ) );
+add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-tag" aria-hidden="true"></i> About', 'aboutsa'));
 add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-eye" aria-hidden="true"></i> Overview', 'overview'));
 add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-users" aria-hidden="true"></i> Edit perms', 'editperms'));
 add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fas fa-skull" aria-hidden="true"></i> Reset users perms', 'reset'));
@@ -56,8 +56,40 @@ queue_style( 'simpleAccess_style' , GSBACK ) ;
 
 function simple_access_show() {
 
+
 	if(isset($_GET['overview'])){
-		include(GSPLUGINPATH.'simpleAccess/overview.php');
+
+				if (file_exists(GSDATAOTHERPATH . "perms.json")) {
+		    echo "<p id='permsCreated'>Reading from perms file</p>";
+				}
+				else {
+					$installData = array();
+
+					$install_files = "../data/users/";
+					$install_userFiles = scandir($install_files) or die('Problem scannig user file.');
+
+
+				  foreach($install_userFiles as $install_ausr){
+
+						$install_ausr = strtolower($install_ausr);
+
+						if($install_ausr == "." || $install_ausr == ".."){
+							continue;
+						}
+
+							$install_name = str_ireplace(".xml","",$install_ausr);
+							$install_name = strtolower($install_name);
+							$install_user = array("id" => $install_name, "category" => $install_name);
+							array_push($installData,$install_user);
+					}
+
+
+
+					$installData = json_encode($installData,JSON_PRETTY_PRINT);
+					file_put_contents('../data/other/perms.json',$installData)or die('Write problem to json');
+					echo "<p id='permsCreated'>Perms file created</p>";
+				}
+				include(GSPLUGINPATH.'simpleAccess/overview.php');
 	}
 	elseif(isset($_GET['reset'])){
 		include(GSPLUGINPATH.'simpleAccess/reset.php');
@@ -67,41 +99,6 @@ function simple_access_show() {
 	}
 	elseif(isset($_GET['aboutsa'])){
 		include(GSPLUGINPATH.'simpleAccess/about.php');
-	}
-	else{
-		include(GSPLUGINPATH.'simpleAccess/intro.php');
-
-		if (file_exists(GSDATAOTHERPATH . "perms.json")) {
-    echo "...";
-		}
-		else {
-			$installData = array();
-
-			$install_files = "../data/users/";
-			$install_userFiles = scandir($install_files) or die('Problem scannig user file.');
-
-
-		  foreach($install_userFiles as $install_ausr){
-
-				$install_ausr = strtolower($install_ausr);
-
-				if($install_ausr == "." || $install_ausr == ".."){
-					continue;
-				}
-
-					$install_name = str_ireplace(".xml","",$install_ausr);
-					$install_name = strtolower($install_name);
-					$install_user = array("id" => $install_name, "category" => $install_name);
-					array_push($installData,$install_user);
-			}
-
-
-
-			$installData = json_encode($installData,JSON_PRETTY_PRINT);
-			file_put_contents('../data/other/perms.json',$installData)or die('Write problem to json');
-			echo "User file created.";
-		}
-
 	}
 }
 
