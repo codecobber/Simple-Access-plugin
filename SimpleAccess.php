@@ -48,8 +48,8 @@ add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class
 add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fa fa-users" aria-hidden="true"></i> Edit perms', 'editperms'));
 add_action('simple_access-sidebar', 'createSideMenu', array($thisfile, '<i class="fas fa-skull" aria-hidden="true"></i> Reset users perms', 'reset'));
 
-register_style('simpleAccessCSS', $SITEURL.'plugins/simpleAccess/css/simpleAccessCSS.css','1', false);
-queue_style('simpleAccessCSS', GSBACK);
+register_style('dark_theme_style', $SITEURL.'plugins/simpleAccess/css/simpleAccessCSS.css', '0.1', FALSE);
+queue_style( 'dark_theme_style' , GSBACK ) ;
 
 // setting the access interface (Below) --------------------------
 
@@ -88,7 +88,7 @@ function simple_access_show() {
 				if($install_ausr == "." || $install_ausr == ".."){
 					continue;
 				}
-					
+
 					$install_name = str_ireplace(".xml","",$install_ausr);
 					$install_name = strtolower($install_name);
 					$install_user = array("id" => $install_name, "category" => $install_name);

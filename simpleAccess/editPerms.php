@@ -1,5 +1,47 @@
 <?php
 
+if(!empty($_POST)){
+//Get the string value from XHR then create an array
+$opt = $_POST['d'];
+$mainUser = $_POST['m'];
+$arr = explode(",",$opt);
+array_pop($arr); //remove trailing comma
+
+$usersDat = file_get_contents("../data/other/perms.json") or die("what!");
+$juserDat = json_decode($usersDat);
+$arrUpdate = array();
+
+
+
+foreach($juserDat as $user_item){
+
+    //match logged in user to the id within json object
+    if($user_item->id == $mainUser){
+
+      $cats = "";
+
+      foreach($arr as $x){
+          $cats .= " ".$x;
+      }
+
+      $cats = ltrim($cats);
+      $mainUserArr = array("id" => $user_item->id, "category" => $cats);
+      array_push($arrUpdate,$mainUserArr);
+    }
+    else{
+
+      $normData = array("id" => $user_item->id, "category" => $user_item->category);
+      array_push($arrUpdate,$normData);
+    }
+}
+
+$juserDat = json_encode($arrUpdate,JSON_PRETTY_PRINT);
+$juserDat = strtolower($juserDat);
+file_put_contents("../data/other/perms.json",$juserDat);
+echo "<h3 id='updateConfirmMessage'>Changes saved</h3>";
+}
+
+
 $filesPerms = "../data/other/";
 
 $userDataGrab = file_get_contents($filesPerms."perms.json");
@@ -49,32 +91,9 @@ function getList(name){
 
 }
 
-function grabChoices(){
-
-  var choices = document.getElementsByName("opt");
-  var checkboxesChecked = "";
-
-  // loop over them
-  for (var i=0; i<choices.length; i++) {
-     // And the checked ones onto a string...
-     if (choices[i].checked) {
-        checkboxesChecked += choices[i].value + ",";
-     }
-  }
-
-
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-     document.getElementById('confirmMessage').innerHTML = this.responseText;
-    }
-  };
-  xhttp.open("GET", "../plugins/simpleAccess/updatePerms.php?m="+mainUser+"&d="+checkboxesChecked, true);
-  xhttp.send();
-
-}
 
 </script>
+
 
 <?php
 echo "
@@ -126,8 +145,36 @@ echo "
           </p>
           <button onclick='grabChoices()'>Submit</button>
           <p id='confirmMessage'></p>
+          <form id='updateForm' method = 'POST' action ='./load.php?id=SimpleAccess&editperms'>
+            <input id='updateInfom' type='hidden' value ='' name='m' />
+            <input id='updateInfod' type='hidden' value ='' name='d' />
+          </form>
     </td>
   </tr>
 </table>";
 
 ?>
+
+<script>
+
+function grabChoices(){
+
+  var choices = document.getElementsByName("opt");
+  var checkboxesChecked = "";
+
+  // loop over them
+  for (var i=0; i<choices.length; i++) {
+     // And the checked ones onto a string...
+     if (choices[i].checked) {
+        checkboxesChecked += choices[i].value + ",";
+     }
+  }
+
+  document.getElementById('updateInfom').value = mainUser;
+  document.getElementById('updateInfod').value = checkboxesChecked;
+  document.getElementById('updateForm').submit();
+  document.getElementById('confirmMessage').innerHTML = "Update Complete";
+
+}
+
+</script>
