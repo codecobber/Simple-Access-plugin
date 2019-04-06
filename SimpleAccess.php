@@ -7,7 +7,7 @@ session_start();
 Plugin Name: Simple Access
 Description: Restrict user access for certain pages
 Version: 1.0
-Author: Code Cobber
+Author: Craig Adams
 Author URI: https://www.codecobber.co.uk/
 */
 

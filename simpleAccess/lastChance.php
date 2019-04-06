@@ -3,7 +3,7 @@
 function makeList(){
 	$jdata = array();
 
-	$files = "../../data/users/";
+	$files = "../data/users/";
 	$userFiles = scandir($files);
 
   echo "<h3 style='margin-top:2em;'>The following have been reset to their default setting:</h3>";
@@ -26,7 +26,7 @@ function makeList(){
 
 
 	$jdata = json_encode($jdata,JSON_PRETTY_PRINT);
- 	file_put_contents("../../data/other/perms.json",$jdata) or die("Bummer!!!");
+ 	file_put_contents("../data/other/perms.json",$jdata) or die("Bummer!!!");
 }
 
 makeList();

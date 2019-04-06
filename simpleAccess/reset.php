@@ -1,20 +1,3 @@
-<script>
-
-function makeList(){
-
-  var xhttp2 = new XMLHttpRequest();
-  xhttp2.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-     document.getElementById('confirmResetMessage').innerHTML = this.responseText;
-    }
-  };
-  xhttp2.open("GET", "../plugins/simpleAccess/lastChance.php", true);
-  xhttp2.send();
-
-}
-</script>
-
-
 
 <div class="resetStyle"><h3><i class='fas fa-exclamation-triangle'></i> CAUTION!!!</h3>
 <p>Clicking the reset button will reset <strong>ALL</strong> of the user permissions back to the default setting.</p>
@@ -23,7 +6,16 @@ function makeList(){
 <hr>
 </div>
 
+<?php
+if(!empty($_POST) && htmlentities($_POST['m']) == '1'){
+  include('../plugins/simpleAccess/lastChance.php');
+}
+?>
+
 
 <p id="confirmResetMessage"></p>
 
-<button onclick="makeList()">Reset <strong>ALL</strong> user permissions</button>
+<form id="resetForm" action="./load.php?id=SimpleAccess&reset" method="POST">
+  <input type='hidden' value ='1' name='m' />
+  <button type = 'submit'>Reset <strong>ALL</strong> user permissions</button>
+</form>

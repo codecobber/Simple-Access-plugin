@@ -3,12 +3,17 @@
 
 if(!empty($_POST)){
 //Get the string value from XHR then create an array
-$opt = $_POST['d'];
-$mainUser = $_POST['m'];
+if(isset($_POST['d'])){
+  $opt = htmlentities($_POST['d']);
+}
+if(isset($_POST['m'])){
+  $mainUser = htmlentities($_POST['m']);
+}
+
 $arr = explode(",",$opt);
 array_pop($arr); //remove trailing comma
 
-$usersDat = file_get_contents("../data/other/perms.json") or die("what!");
+$usersDat = file_get_contents("../data/other/perms.json") or die("what! - no perms file");
 $juserDat = json_decode($usersDat);
 $arrUpdate = array();
 
@@ -46,9 +51,7 @@ file_put_contents("../data/other/perms.json",$juserDat);
 
 
 $filesPerms = "../data/other/";
-
 $userDataGrab = file_get_contents($filesPerms."perms.json");
-
 $jsonGrab = json_decode($userDataGrab);
 $countItems = count($jsonGrab);
 
@@ -125,7 +128,7 @@ echo "
               <input onclick="getList(this.id)" id='<?php echo $jsonGrab[$i]->id; ?>' type='radio' name='opt1'/>
               <label><?php echo $jsonGrab[$i]->id; ?> </label>
               <br><b>Perms: </b> <?php echo $jsonGrab[$i]->category; ?>
-              <br>. . . . . 
+              <br>. . . . .
               </p>
             <?php
             }
