@@ -2,7 +2,6 @@
 
 session_start();
 
-
 /*
 Plugin Name: Simple Access
 Description: Restrict user access for certain pages
@@ -26,13 +25,13 @@ register_plugin(
 	'simple_access_show'
 );
 
+
+
 //$GLOBALS
 $pageEdited = "";
 $user = get_cookie('GS_ADMIN_USERNAME');
 $userFlag = 0;
 $showHidePath = basename($_SERVER['SCRIPT_NAME']);
-
-
 
 add_action('header-body','hideAll');
 add_action('footer','checkPerms');
@@ -53,16 +52,28 @@ queue_style( 'simpleAccess_style' , GSBACK ) ;
 
 // setting the access interface (Below) --------------------------
 
+// Incase the url possesses no querystring and appears blank
+// - we redirect to aboutsa
+$gotoPlace = $SITEURL.'admin/load.php?id=SimpleAccess&aboutsa';
+
+if(stripos($_SERVER['SCRIPT_NAME'],"/admin/load.php") !==FALSE){
+	if($_SERVER['QUERY_STRING'] == 'id=SimpleAccess'){
+		header('Location:'.$gotoPlace);
+	}
+}
+
+
 
 function simple_access_show() {
 
-
 	if(isset($_GET['overview'])){
 
+				//check for perms.json
 				if (file_exists(GSDATAOTHERPATH . "perms.json")) {
 		    echo "<p id='permsCreated'>Reading from perms file</p>";
 				}
 				else {
+					// if json not found then create the file
 					$installData = array();
 
 					$install_files = "../data/users/";
@@ -82,8 +93,6 @@ function simple_access_show() {
 							$install_user = array("id" => $install_name, "category" => $install_name);
 							array_push($installData,$install_user);
 					}
-
-
 
 					$installData = json_encode($installData,JSON_PRETTY_PRINT);
 					file_put_contents('../data/other/perms.json',$installData)or die('Write problem to json');
@@ -247,7 +256,6 @@ function hideMe($pg){
 				document.getElementById('tr-".$pg."').style.display = 'none';
 			</script>";
 	}
-
 }
 
 function updateUsers(){
@@ -256,8 +264,6 @@ function updateUsers(){
 
   $perms_users = json_decode($updateJSON_Users);
 	$pcount = count($perms_users);
-
-
 
 		foreach ($updateUsers as $ukey => $uvalue) {
 			$fname = str_replace(".xml","",$uvalue);
