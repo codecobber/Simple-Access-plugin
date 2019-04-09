@@ -253,7 +253,13 @@ function showMe($pg){
 
 function hideMe($pg){
 
-	if($GLOBALS['showHidePath']=="pages.php"){
+	//check for i18N
+	$loadPath = "id=i18n_base";
+	$loadPathNav = "id=i18n_navigation";
+
+
+	if($GLOBALS['showHidePath']=="pages.php" || $SERVER['QUERY_STRING'] == $loadPath || $SERVER['QUERY_STRING'] ==$loadPath2){
+
 		//remove the listing (row) from pages.php
 			echo "<script>
 				document.getElementById('tr-".$pg."').style.display = 'none';
@@ -320,6 +326,7 @@ function checkPerms(){
 	}
     // call function to get user permissions
 		$user_permsstring = getUserPerms();
+
 
 		if (count($PA_filenames) != 0)
 		{
