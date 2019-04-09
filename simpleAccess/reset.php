@@ -15,7 +15,7 @@ if(!empty($_POST) && htmlentities($_POST['m']) == '1'){
 
 <p id="confirmResetMessage"></p>
 
-<form id="resetForm" action="./load.php?id=SimpleAccess&reset" method="POST">
+<form id="resetForm" action="./load.php?id=simpleAccess&reset" method="POST">
   <input type='hidden' value ='1' name='m' />
   <button type = 'submit'>Reset <strong>ALL</strong> user permissions</button>
 </form>
