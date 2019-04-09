@@ -57,10 +57,10 @@ queue_style( 'simpleAccess_style' , GSBACK ) ;
 
 // Incase the url possesses no querystring and appears blank
 // - we redirect to aboutsa
-$gotoPlace = $SITEURL.'admin/load.php?id=SimpleAccess&aboutsa';
+$gotoPlace = $SITEURL.'admin/load.php?id=simpleAccess&aboutsa';
 
 if(stripos($_SERVER['SCRIPT_NAME'],"/admin/load.php") !==FALSE){
-	if($_SERVER['QUERY_STRING'] == 'id=SimpleAccess'){
+	if($_SERVER['QUERY_STRING'] == 'id=simpleAccess'){
 		header('Location:'.$gotoPlace);
 	}
 }

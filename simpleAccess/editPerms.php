@@ -152,7 +152,7 @@ echo "
           </p>
           <button onclick='grabChoices()'>Submit</button>
           <p id='confirmMessage'></p>
-          <form id='updateForm' method = 'POST' action ='./load.php?id=SimpleAccess&editperms'>
+          <form id='updateForm' method = 'POST' action ='./load.php?id=simpleAccess&editperms'>
             <input id='updateInfom' type='hidden' value ='' name='m' />
             <input id='updateInfod' type='hidden' value ='' name='d' />
           </form>
