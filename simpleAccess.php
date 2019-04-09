@@ -6,7 +6,7 @@ session_start();
 Plugin Name: Simple Access
 Description: Restrict user access for certain pages
 Version: 1.0
-Author: Craig Adams
+Author: Code Cobber
 Author URI: https://www.codecobber.co.uk/
 */
 
@@ -54,17 +54,6 @@ register_style('simpleAccess_style', $SITEURL.'plugins/simpleAccess/css/simpleAc
 queue_style( 'simpleAccess_style' , GSBACK ) ;
 
 // setting the access interface (Below) --------------------------
-
-// Incase the url possesses no querystring and appears blank
-// - we redirect to aboutsa
-$gotoPlace = $SITEURL.'admin/load.php?id=simpleAccess&aboutsa';
-
-if(stripos($_SERVER['SCRIPT_NAME'],"/admin/load.php") !==FALSE){
-	if($_SERVER['QUERY_STRING'] == 'id=simpleAccess'){
-		header('Location:'.$gotoPlace);
-	}
-}
-
 
 
 function simple_access_show() {
