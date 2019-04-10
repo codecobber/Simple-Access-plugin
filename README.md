@@ -1,8 +1,17 @@
-# Simple-Access-plugin
-Hide pages depending on the user logged in.
+# Simple Access Plugin
+An updated version from the original and much simpler.
 
-The plugin reads from the 'author' tag of each page to obtain the author of the page.
+Depending on the permissions set for each user, users can access and edit all pages created by another user.
+The plugin does NOT allow access the targeting of specific pages per se but rather whole collections created by another user. 
 
-If the the author value does not match the logged in user or does not possess the correct permissions then the page entry is hidden from the pages listing in pages.php.
+**A good example would be:**
 
-If the user tries to access a specific page by changing the url at the address bar then the content is removed and they are informed accordingly that they don not have permission to edit the page.
+User 'John' has created three pages.
+User 'Sally' is granted access to pages created by user 'John'.
+
+So, everything John created is available to Sally.
+
+The 'Simple Access' plugin hide pages depending on the user logged in. The plugin obtains the author of each page and if the author value does not match the logged in user or does not possess the correct permissions, then the page entry is removed from the pages listing in pages.php.
+
+The same priciple is also applied to pages in edit.php too
+
