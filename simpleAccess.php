@@ -31,16 +31,16 @@ register_plugin(
 
 
 //$GLOBALS
-$pageEdited = "";
-$user = get_cookie('GS_ADMIN_USERNAME');
-$userFlag = 0;
-$showHidePath = basename($_SERVER['SCRIPT_NAME']);
+$SA_pageEdited = "";
+$SA_user = get_cookie('GS_ADMIN_USERNAME');
+$SA_userFlag = 0;
+$SA_showHidePath = basename($_SERVER['SCRIPT_NAME']);
 
-add_action('header-body','hideAll');
-add_action('footer','checkPerms');
-add_action('edit-extras','editTest');
-add_action('changedata-aftersave','aftersave');
-add_action('header','setUser');
+add_action('header-body','SA_hideAll');
+add_action('footer','SA_checkPerms');
+add_action('edit-extras','SA_editTest');
+add_action('changedata-aftersave','SA_aftersave');
+add_action('header','SA_setUser');
 
 # add a link in the admin tab 'simple_access'
 //@Params(within the plugins sidebar, create a side menu, (link to this file, use this text as title))
@@ -106,12 +106,12 @@ function simple_access_show() {
 
 // setting the access rights (Below) --------------------------
 
-function setUser(){
-	$GLOBALS['user'] = get_cookie('GS_ADMIN_USERNAME');
+function SA_setUser(){
+	$GLOBALS['SA_user'] = get_cookie('GS_ADMIN_USERNAME');
 	echo '<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">';
 }
 
-function hideAll(){
+function SA_hideAll(){
 	//Search for attribute that starts with tr- within the pages.php page
 	//Hide all relevant table rows from the start.
 	$uri = $_SERVER['REQUEST_URI'];
@@ -129,8 +129,8 @@ function hideAll(){
 }
 
 
-function getUserPerms(){
-	$user = $GLOBALS['user'];
+function SA_getUserPerms(){
+	$user = $GLOBALS['SA_user'];
 	//get user perms
 	$user_perms = file_get_contents(GSDATAOTHERPATH."perms.json");
 	$json_perms = json_decode($user_perms);
@@ -148,7 +148,7 @@ function getUserPerms(){
 	}
 }
 
-function afterSave(){
+function SA_afterSave(){
   $pagePath = GSDATAPAGESPATH.$_SESSION['pageName'];
 	$xmlDoc = new DOMDocument();
   $xmlDoc->load($pagePath);
@@ -162,12 +162,12 @@ function afterSave(){
 }
 
 
-function protectPage($pageAuthor,$url=""){
+function SA_protectPage($pageAuthor,$url=""){
 	// A little output to show the file author
 	echo "<b>File author: </b>".$pageAuthor;
 
 	// call function to get user permissions
-	$user_permsString = getUserPerms();
+	$user_permsString = SA_getUserPerms();
 	if(stripos($user_permsString,$pageAuthor)!==false){
 			echo " - Access granted.";
 	}
@@ -183,7 +183,7 @@ function protectPage($pageAuthor,$url=""){
 }
 
 
-function getFileData($fname,$flag=0){
+function SA_getFileData($fname,$flag=0){
 	//open the current file and set session variables
 
 	$thisCurrentFile = file_get_contents(GSDATAPAGESPATH.$fname) or die("bummer! - No File man.");
@@ -199,9 +199,9 @@ function getFileData($fname,$flag=0){
 }
 
 
-function editTest(){
+function SA_editTest(){
 
-	$user = $GLOBALS['user'];
+	$user = $GLOBALS['SA_user'];
 	$queryString = $_SERVER['QUERY_STRING'];
 
 	// Check if the query string holds an ampersand '&' -
@@ -215,8 +215,8 @@ function editTest(){
 		$queryString = str_replace("id=", "", $queryString);
 		$queryString = substr($queryString,0,$ampSearch-3).".xml";
 
-		$pa = getFileData($queryString); //get the page author
-		protectPage($pa,$queryString);
+		$pa = SA_getFileData($queryString); //get the page author
+		SA_protectPage($pa,$queryString);
 	}
 	elseif($queryString == "" || is_null($queryString)){
 		//checking if the page is create new page
@@ -224,14 +224,14 @@ function editTest(){
 	}
 	else{
 		$queryString = str_replace("id=", "", $queryString.".xml");
-		$check = getFileData($queryString,1);
+		$check = SA_getFileData($queryString,1);
 		// check page access
-		protectPage($_SESSION['fileAuth'],$queryString);
+		SA_protectPage($_SESSION['fileAuth'],$queryString);
 	}
 }
 
-function showMe($pg){
-	if($GLOBALS['showHidePath']=="pages.php"){
+function SA_showMe($pg){
+	if($GLOBALS['SA_showHidePath']=="pages.php"){
 	//display the row within pages.php allowing the user to see the page name and edit button
 		echo "<script>
 			document.getElementById('tr-".$pg."').style.display = 'table-row';
@@ -240,14 +240,14 @@ function showMe($pg){
 }
 
 
-function hideMe($pg){
+function SA_hideMe($pg){
 
 	//check for i18N
 	$loadPath = "id=i18n_base";
 	$loadPathNav = "id=i18n_navigation";
 
 
-	if($GLOBALS['showHidePath']=="pages.php" || $SERVER['QUERY_STRING'] == $loadPath || $SERVER['QUERY_STRING'] ==$loadPath2){
+	if($GLOBALS['SA_showHidePath']=="pages.php" || $SERVER['QUERY_STRING'] == $loadPath || $SERVER['QUERY_STRING'] ==$loadPath2){
 
 		//remove the listing (row) from pages.php
 			echo "<script>
@@ -256,7 +256,7 @@ function hideMe($pg){
 	}
 }
 
-function updateUsers(){
+function SA_updateUsers(){
 	$updateUsers = scandir(GSDATAPATH."users") or die('No users file found');
 	$updateJSON_Users = file_get_contents(GSDATAOTHERPATH."perms.json") or die('No perms file found');
 
@@ -297,14 +297,14 @@ function updateUsers(){
 
 
 
-function checkPerms(){
+function SA_checkPerms(){
 
-	updateUsers();
+	SA_updateUsers();
 
 	// Get user logged include '
-	$userFlag = 0;
+	$SA_userFlag = 0;
 
-	$PA_current_user = $GLOBALS['user'];
+	$PA_current_user = $GLOBALS['SA_user'];
 
 	$dir_handle = @opendir(GSDATAPAGESPATH) or exit('Unable to open ...getsimple/data/pages folder');
 	$PA_filenames = array(); // holds the pages list from the pages folder
@@ -314,7 +314,7 @@ function checkPerms(){
 			$PA_filenames[] = $PA_filename;
 	}
     // call function to get user permissions
-		$user_permsstring = getUserPerms();
+		$user_permsstring = SA_getUserPerms();
 
 
 		if (count($PA_filenames) != 0)
@@ -335,25 +335,25 @@ function checkPerms(){
 
 					// Check the array and see if the page author is present
 		      if(stripos($user_permsstring,$PA_author)!==false){
-						$GLOBALS['userFlag'] = 0;
+						$GLOBALS['SA_userFlag'] = 0;
 					}
 					elseif(stripos($user_permsstring,'index') !== false && $PA_url == 'index'){
 						//this is the home page (index.xml)
-							$GLOBALS['userFlag'] = 0;
+							$GLOBALS['SA_userFlag'] = 0;
 					}
 					else{
 						//if page not registered then set error flag to 1
-						$GLOBALS['userFlag'] = 1;
+						$GLOBALS['SA_userFlag'] = 1;
 					}
 
 
 					//Check the flag setting- if 1 then hide current page file
 					if($GLOBALS['userFlag'] == 1){
-						hideMe($PA_url);
-						$GLOBALS['userFlag'] == 0; //reset flag for next page
+						SA_hideMe($PA_url);
+						$GLOBALS['SA_userFlag'] == 0; //reset flag for next page
 					}
 					else{
-						showMe($PA_url);
+						SA_showMe($PA_url);
 						$GLOBALS['userFlag'] == 0;
 					}
 				}
