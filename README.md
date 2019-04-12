@@ -15,3 +15,4 @@ The 'Simple Access' plugin hide pages depending on the user logged in. The plugi
 
 The same priciple is also applied to pages in edit.php too
 
+PLEASE NOTE: To add users to the GetSimple cms, I suggest installing the multi user plugin available from GetSimple addons Get Multi User
