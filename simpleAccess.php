@@ -31,7 +31,10 @@ register_plugin(
 
 
 //$GLOBALS
+<<<<<<< HEAD
 
+=======
+>>>>>>> d037a524f1d171cfdbc879abf013adddbd5ae2f7
 $SA_user = get_cookie('GS_ADMIN_USERNAME');
 $SA_userFlag = 0;
 $SA_showHidePath = basename($_SERVER['SCRIPT_NAME']);
